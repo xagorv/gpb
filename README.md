@@ -1,2 +1,2 @@
 # gpb
-Test task
+Test task by Val Gorokhov
