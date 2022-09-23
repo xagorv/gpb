@@ -38,3 +38,7 @@ int_id CHAR(16) NOT NULL,
 str VARCHAR(32),
 address VARCHAR(255)
 );
+
+CREATE INDEX log_address_idx USING hash ON log (address);
+
+
