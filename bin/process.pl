@@ -23,11 +23,11 @@ for my $source (@sources) {
         my $line = $_;
         # Remove leading and trailing spaces
         $line=~ s/^\s+|\s+$//g;
-        my ($date, $timestamp, $int_id, $operation, $text) = ($line =~ /(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s(.*)/);
+        my ($date, $timestamp, $int_id, $rest) = ($line =~ /(\S+)\s+(\S+)\s+(\S+)\s+(.*)/);
+        my ($operation, $text) = ($rest =~ /(\S+)\s+(.*)/);
         if ($operation and $operation eq '<=') {
             my ($id) = ($text =~ /id=(\S+)/);
             if ($id) {
-                my $lenid = length($id);
                 my $sth = $dbh->prepare(
                     'INSERT INTO message (created, id, int_id, str) VALUES (?, ?, ?, ?)'
                 ) or die 'prepare statement failed: ' . $dbh->errstr();
@@ -38,9 +38,17 @@ for my $source (@sources) {
             }
         }
         else {
-            
+            my ($email) = ($rest =~ /(\S+@[A-Za-z1-9_]+\.[A-Za-z]+)/);
+            if (!$email) {
+                $email = ''
+            }
+            my $sth = $dbh->prepare(
+                'INSERT INTO log (created, int_id, str, address) VALUES (?, ?, ?, ?)'
+            ) or die 'prepare statement failed: ' . $dbh->errstr();
+            $sth->execute("$date $timestamp", $int_id, $rest, $email);
         }
     }
     close(S);
 }
+$dbh->disconnect();
 
