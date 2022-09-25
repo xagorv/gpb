@@ -22,7 +22,7 @@ use logger
 
 CREATE TABLE message (
 created TIMESTAMP(0) NOT NULL,
-id VARCHAR(16) NOT NULL,
+id VARCHAR(64) NOT NULL,
 int_id CHAR(16) NOT NULL,
 str VARCHAR(255) NOT NULL,
 status BOOL,
