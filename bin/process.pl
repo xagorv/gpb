@@ -10,7 +10,7 @@ use Data::Dumper;
 my $script_location = abs_path($0);
 my ($repo_root) = ($script_location =~ /^(.*\/gpb\/)/);
 my $files = $repo_root.'src/*';
-my $cfg_file = $repo_root.'conf/config.yml';
+my $cfg_file = $repo_root.'httpd/config.yml';
 my $config = YAML::Tiny->read($cfg_file)->[0];
 
 my $dsn = "DBI:mysql:database=$config->{database};host=$config->{host};port=$config->{port}";
