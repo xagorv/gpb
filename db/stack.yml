@@ -5,8 +5,13 @@ services:
   db:
     network_mode: host
     image: mariadb
-    # ports:
-      # - "3306:3306"
     restart: always
     environment:
       MARIADB_ROOT_PASSWORD: example
+
+  apache:
+    network_mode: host
+    image: docker_apache
+    restart: always
+    volumes:
+      - "../httpd:"
