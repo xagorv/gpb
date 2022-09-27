@@ -15,7 +15,6 @@ else {
     $params =~ s/%40/@/;
     ($email) = ($params =~ /.*=(.*)/);
 }
-print "EMAIL: $email";
 my $cfg_file = 'config.yml';
 my $config = YAML::Tiny->read($cfg_file)->[0];
 my $dsn = "DBI:mysql:database=$config->{database};host=$config->{host};port=$config->{port} + 1";
@@ -40,12 +39,20 @@ print '<html>
     <body>
         <table>
             <tr>
-                <th>Created</th><th>text</th>
+                <th>Created</th><th>int_id</th><th>text</th>
             </tr>
 ';
 print "\n";
+my $sth1 = $dbh->prepare(
+    'SELECT created, str FROM message WHERE int_id LIKE ?'
+) or die 'prepare statement failed: ' . $dbh->errstr();
+my($mts, $mtext);
 while(($ts, $int_id, $text) = $sth->fetchrow()) {
-print "<tr><td>$ts</td><td>$text</td></tr>\n";
+    print "<tr><td>$ts</td><td>$int_id</td><td>$text</td></tr>\n";
+    $sth1->execute($int_id);
+    while(($mts, $mtext) = $sth1->fetchrow()) {
+        print "<tr style=\"font-color: blue\"><td style=\"font-color: blue\">$mts</td><td>$int_id</td><td>$mtext</td></tr>";
+    }
 }
 print '     </table>
     </body>

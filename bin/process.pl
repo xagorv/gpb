@@ -38,7 +38,7 @@ for my $source (@sources) {
             }
         }
         else {
-            my ($email) = ($rest =~ /(\S+@[A-Za-z1-9_]+\.[A-Za-z]+)/);
+            my ($email) = ($rest =~ /([A-Za-z1-9_]+@[A-Za-z1-9_]+\.[A-Za-z]+)/);
             if (!$email) {
                 $email = ''
             }
