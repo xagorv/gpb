@@ -46,12 +46,10 @@ cd gpb/bin
 ./process.pl
 
 ## Start Apache servcer
-cd /gpb
-git clone https://github.com/pclinger/docker-apache-perl.git
-cd docker-apache-perl
-docker build -t docker-apache-perl .
+cd /gpb/docker_apache
+docker build -t docker_apache .
 
 cd gpb/
-docker run -v `pwd`/httpd:/var/www/html --name apache -p 80:80 -d docker-apache-perl /usr/sbin/apache2ctl -D FOREGROUND
+docker run -v `pwd`/httpd:/var/www/html --name apache -p 80:80 -d docker_apache /usr/sbin/apache2ctl -D FOREGROUND
 
 
