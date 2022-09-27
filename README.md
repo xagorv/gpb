@@ -22,7 +22,7 @@ use logger
 
 CREATE TABLE message (
 created TIMESTAMP(0) NOT NULL,
-id VARCHAR(64) NOT NULL,
+id VARCHAR(100) NOT NULL,
 int_id CHAR(16) NOT NULL,
 str VARCHAR(255) NOT NULL,
 status BOOL,
@@ -35,10 +35,23 @@ CREATE INDEX message_int_id_idx ON message (int_id);
 CREATE TABLE log (
 created TIMESTAMP(0) NOT NULL,
 int_id CHAR(16) NOT NULL,
-str VARCHAR(32),
+str VARCHAR(600),
 address VARCHAR(255)
 );
 
 CREATE INDEX log_address_idx USING hash ON log (address);
+
+## Fill out database:
+cd gpb/bin
+./process.pl
+
+## Start Apache servcer
+cd /gpb
+git clone https://github.com/pclinger/docker-apache-perl.git
+cd docker-apache-perl
+docker build -t docker-apache-perl .
+
+cd gpb/
+docker run -v `pwd`/httpd:/var/www/html --name apache -p 80:80 -d docker-apache-perl /usr/sbin/apache2ctl -D FOREGROUND
 
 
