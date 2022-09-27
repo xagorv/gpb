@@ -7,6 +7,15 @@ use YAML::Tiny;
 use DBI;
 use Data::Dumper;
 
+sub get_email{
+    my $str = $_[0];
+    my ($email) = ($str =~ /([A-Za-z1-9_]+@[A-Za-z1-9_]+\.[A-Za-z]+)/);
+    if (!$email) {
+        $email = ''
+    }
+    return $email
+}
+
 my $script_location = abs_path($0);
 my ($repo_root) = ($script_location =~ /^(.*\/gpb\/)/);
 my $files = $repo_root.'src/*';
@@ -28,20 +37,18 @@ for my $source (@sources) {
         if ($operation and $operation eq '<=') {
             my ($id) = ($text =~ /id=(\S+)/);
             if ($id) {
+                my $email = get_email($text);
                 my $sth = $dbh->prepare(
-                    'INSERT INTO message (created, id, int_id, str) VALUES (?, ?, ?, ?)'
+                    'INSERT INTO message (created, id, int_id, str, address) VALUES (?, ?, ?, ?, ?)'
                 ) or die 'prepare statement failed: ' . $dbh->errstr();
-                $sth->execute("$date $timestamp", $id, $int_id, "$id $operation $text");
+                $sth->execute("$date $timestamp", $id, $int_id, "$id $operation $text", $email);
             }
             else {
                 print("FATAL: Cannot put message '$line' to table because cannot determine id.\n")
             }
         }
         else {
-            my ($email) = ($rest =~ /([A-Za-z1-9_]+@[A-Za-z1-9_]+\.[A-Za-z]+)/);
-            if (!$email) {
-                $email = ''
-            }
+            my $email = get_email($rest);
             my $sth = $dbh->prepare(
                 'INSERT INTO log (created, int_id, str, address) VALUES (?, ?, ?, ?)'
             ) or die 'prepare statement failed: ' . $dbh->errstr();
@@ -52,3 +59,4 @@ for my $source (@sources) {
 }
 $dbh->disconnect();
 
+1;
