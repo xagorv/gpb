@@ -98,7 +98,7 @@ print '<html>
     <body>
         <table>
             <tr>
-                <th>Created</th><th>int id</th><th>text</th>
+                <th>Created</th><th>Info</th>
             </tr>
 ';
 print "\n";
@@ -107,9 +107,8 @@ my $count = 0;
 my $msg = '';
 for my $p (@records) {
     my $rts = web_prepare($p->[0]);
-    my $rint_id = web_prepare($p->[1]);
     my $rtext = web_prepare($p->[2]);
-    print("<tr><td>$rts</td><td>$rint_id</td><td>$rtext</td></tr>");
+    print("<tr><td>$rts</td><td>$rtext</td></tr>");
     if ($count++ >= 100) {
         $msg = "<b>Output too long. Displayed only first 100 records.</b><br>";
         last;

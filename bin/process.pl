@@ -40,7 +40,7 @@ for my $source (@sources) {
                 my $sth = $dbh->prepare(
                     'INSERT INTO message (created, id, int_id, str) VALUES (?, ?, ?, ?)'
                 ) or die 'prepare statement failed: ' . $dbh->errstr();
-                $sth->execute("$date $timestamp", $id, $int_id, "$operation $text");
+                $sth->execute("$date $timestamp", $id, $int_id, "$int_id $rest");
             }
             else {
                 print("FATAL: Cannot put message '$line' to table because cannot determine id.\n")

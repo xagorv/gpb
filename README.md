@@ -6,7 +6,6 @@ git clone https://github.com/xagorv/gpb.git
 
 ## Starting database
 cd gpb
-cd db
 docker run -d --restart always --network host --name mariadb --env MARIADB_ROOT_PASSWORD=example mariadb
 
 ## Connect to database:
@@ -41,13 +40,15 @@ CREATE INDEX log_address_idx USING hash ON log (address);
 
 ## Fill out database:
 cd gpb/bin
-./process.pl
+./process.pl # В некоторых строках с флагом '<=' нет id. Программа выдает сообщение об ошибке в таком случае и запись никуда не помещает.
 
 ## Start Apache servcer
 cd /gpb/docker_apache
 docker build -t docker_apache .
 
-cd gpb/
+cd gpb/ # Важно перекти в корень каталога, так как в следующей команде используется пкоманда получения пути к нему.
 docker run  --restart always -v `pwd`/httpd:/var/www/html --name apache --network host -d docker_apache /usr/sbin/apache2ctl -D FOREGROUND
 
+## Work with service
+Набираем в строке адреса браузера localhost. У меня машина работает под Ubuntu на ней все работает. Я попробовал запустить другой компьютер и набрал в строке адреса брайзера IP машины с сервисом. Всё видно, всё работает.
 
