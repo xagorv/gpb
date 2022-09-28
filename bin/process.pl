@@ -51,7 +51,7 @@ for my $source (@sources) {
             my $sth = $dbh->prepare(
                 'INSERT INTO log (created, int_id, str, address) VALUES (?, ?, ?, ?)'
             ) or die 'prepare statement failed: ' . $dbh->errstr();
-            $sth->execute("$date $timestamp", $int_id, $rest, $email);
+            $sth->execute("$date $timestamp", $int_id, "$int_id $rest", $email);
         }
     }
     close(S);

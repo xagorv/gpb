@@ -51,6 +51,7 @@ while(($ts, $int_id, $text) = $sth->fetchrow()) {
     my @set = ($ts, $int_id, $text);
     push(@lrecords, \@set);
 }
+print ("LRECORDS: ".$#lrecords);
 my $sth1 = $dbh->prepare(
     'SELECT created, int_id, str FROM message WHERE str LIKE ? ORDER BY int_id, created ASC LIMIT 101'
 ) or die 'prepare statement failed: ' . $dbh->errstr();
@@ -68,11 +69,11 @@ my @records = ();
 my $go = 1;
 while ($go) {
     if ($m >= $#mrecords) {
-        push(@records, @lrecords[$l, $#lrecords]);
+        push(@records, @lrecords[$l..$#lrecords]);
         $go = 0;
     }
     elsif ($l >= $#lrecords) {
-        push(@records, @mrecords[$m, $#mrecords]);
+        push(@records, @mrecords[$m..$#mrecords]);
         $go = 0;
     }
     elsif (right_order($lrecords[$l], $mrecords[$m])) {
