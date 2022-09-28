@@ -23,7 +23,6 @@ created TIMESTAMP(0) NOT NULL,
 id VARCHAR(100) NOT NULL,
 int_id CHAR(16) NOT NULL,
 str VARCHAR(255) NOT NULL,
-address VARCHAR(255),
 status BOOL,
 CONSTRAINT message_id_pk PRIMARY KEY(id)
 );

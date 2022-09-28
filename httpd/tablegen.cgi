@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-use strict;
+use strict;1RwtJj-000ApM-CO
 use warnings;
 use YAML::Tiny;
 use DBI;
@@ -22,8 +22,20 @@ my $dbh = DBI->connect($dsn, $config->{db_user}, $config->{password});
 my $sth = $dbh->prepare(
     'SELECT created, int_id, str FROM log WHERE address LIKE ?'
 ) or die 'prepare statement failed: ' . $dbh->errstr();
-$sth->execute($email);
+$sth->execute($email) or die 'execute statement failed: ' . $dbh->errstr();
 my ($ts, $int_id, $text);
+my $sth1 = $dbh->prepare(
+    'SELECT created, str FROM message WHERE int_id LIKE ?'
+) or die 'prepare statement failed: ' . $dbh->errstr();
+my($mts, $mtext);
+while(($ts, $int_id, $text) = $sth->fetchrow()) {
+    print "<tr><td>$ts</td><td>$int_id</td><td>$text</td></tr>\n";
+    $sth1->execute($int_id);
+    while(($mts, $mtext) = $sth1->fetchrow()) {
+        print "<tr style=\"font-color: blue\"><td style=\"font-color: blue\">$mts</td><td>$int_id</td><td>$mtext</td></tr>";
+    }
+}
+
 print '<html>
     <head>
         <style>
@@ -43,17 +55,8 @@ print '<html>
             </tr>
 ';
 print "\n";
-my $sth1 = $dbh->prepare(
-    'SELECT created, str FROM message WHERE int_id LIKE ?'
-) or die 'prepare statement failed: ' . $dbh->errstr();
-my($mts, $mtext);
-while(($ts, $int_id, $text) = $sth->fetchrow()) {
-    print "<tr><td>$ts</td><td>$int_id</td><td>$text</td></tr>\n";
-    $sth1->execute($int_id);
-    while(($mts, $mtext) = $sth1->fetchrow()) {
-        print "<tr style=\"font-color: blue\"><td style=\"font-color: blue\">$mts</td><td>$int_id</td><td>$mtext</td></tr>";
-    }
-}
+
+
 print '     </table>
     </body>
 </html>';
