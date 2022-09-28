@@ -13,10 +13,17 @@ sub right_order {
     if ($mp1->[1] le $mp2->[1]) {
         return 1;
     }
-    elsif(str2time($mp1->[0]) <= str2time($mp1->[1])) {
+    elsif(str2time($mp1->[0]) <= str2time($mp2->[0])) {
         return 1;
     }
     return 0;
+}
+
+sub web_prepare {
+    my $str = shift;
+    $str =~ s/>/&gt;/g;
+    $str =~ s/</&lt;/g;
+    return $str
 }
 
 print "Content-type: text/html\n\n";
@@ -60,14 +67,19 @@ my $m = 0;
 my @records = ();
 my $go = 1;
 while ($go) {
-    if ($m >= scalar(@mrecords) or right_order($lrecords[$l], $mrecords[$m])) {
+    if ($m >= $#mrecords) {
+        push(@records, @lrecords[$l, $#lrecords]);
+        $go = 0;
+    }
+    elsif ($l >= $#lrecords) {
+        push(@records, @mrecords[$m, $#mrecords]);
+        $go = 0;
+    }
+    elsif (right_order($lrecords[$l], $mrecords[$m])) {
         push(@records, $lrecords[$l++]);
     }
-    if ($l >= scalar(@lrecords) or right_order($mrecords[$m], $lrecords[$l])){
+    else {
         push(@records, $mrecords[$m++]);
-    }
-    if ($m >= scalar(@mrecords) and $l >= scalar(@lrecords)) {
-        $go = 0;
     }
 }
 
@@ -91,16 +103,23 @@ print '<html>
 ';
 print "\n";
 
+my $count = 0;
+my $msg = '';
 for my $p (@records) {
-    my $rts = $p->[0];
-    my $rint_id = $p->[1];
-    my $rtext = $p->[2];
+    my $rts = web_prepare($p->[0]);
+    my $rint_id = web_prepare($p->[1]);
+    my $rtext = web_prepare($p->[2]);
     print("<tr><td>$rts</td><td>$rint_id</td><td>$rtext</td></tr>");
+    if ($count++ >= 100) {
+        $msg = "<b>Output too long. Displayed only first 100 records.</b><br>";
+        last;
+    }
 }
 
-print '     </table>
+print "     </table>
+    $msg
     </body>
-</html>';
+</html>";
 
 1;
 
