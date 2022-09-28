@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-use strict;1RwtJj-000ApM-CO
+use strict;
 use warnings;
 use YAML::Tiny;
 use DBI;
@@ -9,7 +9,7 @@ print "Content-type: text/html\n\n";
 my $params = $ENV{'QUERY_STRING'};
 my $email;
 if (! $params) {
-    $email = 'udbbwscdnbegrmloghuf@london.com';
+    $email = '%tpxmuwr@somehost.ru%';
 }
 else {
     $params =~ s/%40/@/;
@@ -17,23 +17,27 @@ else {
 }
 my $cfg_file = 'config.yml';
 my $config = YAML::Tiny->read($cfg_file)->[0];
+my @records = ();
+
 my $dsn = "DBI:mysql:database=$config->{database};host=$config->{host};port=$config->{port} + 1";
 my $dbh = DBI->connect($dsn, $config->{db_user}, $config->{password});
 my $sth = $dbh->prepare(
-    'SELECT created, int_id, str FROM log WHERE address LIKE ?'
+    'SELECT created, int_id, str FROM log WHERE address LIKE ? LIMIT 101'
 ) or die 'prepare statement failed: ' . $dbh->errstr();
 $sth->execute($email) or die 'execute statement failed: ' . $dbh->errstr();
 my ($ts, $int_id, $text);
-my $sth1 = $dbh->prepare(
-    'SELECT created, str FROM message WHERE int_id LIKE ?'
-) or die 'prepare statement failed: ' . $dbh->errstr();
-my($mts, $mtext);
 while(($ts, $int_id, $text) = $sth->fetchrow()) {
-    print "<tr><td>$ts</td><td>$int_id</td><td>$text</td></tr>\n";
-    $sth1->execute($int_id);
-    while(($mts, $mtext) = $sth1->fetchrow()) {
-        print "<tr style=\"font-color: blue\"><td style=\"font-color: blue\">$mts</td><td>$int_id</td><td>$mtext</td></tr>";
-    }
+    my @set = ($ts, $int_id, $text);
+    push(@records, \@set);
+}
+my $sth = $dbh->prepare(
+    'SELECT created, int_id, str FROM message WHERE str LIKE ? LIMIT 101'
+) or die 'prepare statement failed: ' . $dbh->errstr();
+my($mts, $mint_id, $mtext);
+$sth->execute("\%$email\%");
+while(($mts, $mint_id, $mtext) = $sth->fetchrow()) {
+    my @mset = ($mts, $mint_id, $mtext);
+    push(@records, \@mset);
 }
 
 print '<html>
@@ -56,6 +60,9 @@ print '<html>
 ';
 print "\n";
 
+for my $p (@records) {
+    print("<tr><td>$p->[0]</td><td>$p->[1]</td><td>$p->[2]</td></tr>");
+}
 
 print '     </table>
     </body>

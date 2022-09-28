@@ -48,6 +48,6 @@ cd /gpb/docker_apache
 docker build -t docker_apache .
 
 cd gpb/
-docker run -v `pwd`/httpd:/var/www/html --name apache --network host -d docker_apache /usr/sbin/apache2ctl -D FOREGROUND
+docker run  --restart always -v `pwd`/httpd:/var/www/html --name apache --network host -d docker_apache /usr/sbin/apache2ctl -D FOREGROUND
 
 

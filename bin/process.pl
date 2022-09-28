@@ -37,11 +37,10 @@ for my $source (@sources) {
         if ($operation and $operation eq '<=') {
             my ($id) = ($text =~ /id=(\S+)/);
             if ($id) {
-                my $email = get_email($text);
                 my $sth = $dbh->prepare(
-                    'INSERT INTO message (created, id, int_id, str, address) VALUES (?, ?, ?, ?, ?)'
+                    'INSERT INTO message (created, id, int_id, str) VALUES (?, ?, ?, ?)'
                 ) or die 'prepare statement failed: ' . $dbh->errstr();
-                $sth->execute("$date $timestamp", $id, $int_id, "$id $operation $text", $email);
+                $sth->execute("$date $timestamp", $id, $int_id, "$operation $text");
             }
             else {
                 print("FATAL: Cannot put message '$line' to table because cannot determine id.\n")
