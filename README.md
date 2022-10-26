@@ -1,5 +1,5 @@
 # gpb
-Test task by Val Gorokhov
+Test task by Val Gorokhov as candidate
 
 ## Cloning repository
 git clone https://github.com/xagorv/gpb.git
